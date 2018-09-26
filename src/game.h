@@ -84,6 +84,8 @@ enum ComponentType {UI_RED_LED,
 typedef enum ComponentType ComponentType;
 
 typedef struct {
+  bool quit;
+
   Button scanButton;
   Button mineButton;
 
@@ -109,6 +111,10 @@ int y_log_to_real(float y);
 SDL_Texture* load_texture(SDL_Renderer *renderer,
                           char *filename);
 int render_init();
+
+void handle_input(GameState *state);
+
+void game_loop(GameState *state);
 
 #define GAME_H
 #endif

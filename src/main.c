@@ -6,15 +6,9 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-
   game_init();
 
-  SDL_Rect rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-  SDL_RenderFillRect(renderer, &rect);
-  render_ui(renderer, state);
-  SDL_RenderPresent(renderer);
-
-  SDL_Delay(2000);
+  game_loop(state);
 
   SDL_DestroyWindow(window);
 
