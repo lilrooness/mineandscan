@@ -1,12 +1,4 @@
-#ifdef RENDER_H
-#else
-
 #include "game.h"
-#include "ui.h"
-
-SDL_Window *window;
-SDL_Renderer *renderer;
-SDL_Texture *spriteSheet;
 
 void render_ui(SDL_Renderer *renderer, GameState *state) {
 
@@ -102,7 +94,3 @@ int render_init() {
 
   return 0;
 }
-
-
-#define RENDER_H
-#endif
