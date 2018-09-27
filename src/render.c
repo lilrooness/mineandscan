@@ -2,6 +2,7 @@
 
 void render_ui(SDL_Renderer *renderer, GameState *state) {
 
+  //draw buttons
   SDL_Rect buttonSrcRect_up = {UI_BTN_UP_X, UI_BTN_UP_Y,
                                SPRITE_W, SPRITE_H};
   
@@ -16,27 +17,80 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                                 state->mineButton.y,
                                 SPRITE_W, SPRITE_H};
 
-  SDL_Rect *activeSrc = &buttonSrcRect_up;
+  SDL_Rect *activeBtnSrc = &buttonSrcRect_up;
 
   if(state->scanButton.down) {
-    activeSrc = &buttonSrcRect_down;
+    activeBtnSrc = &buttonSrcRect_down;
   }
 
   SDL_RenderCopy(renderer,
                  spriteSheet,
-                 activeSrc,
+                 activeBtnSrc,
                  &scanButtonDstRect);
 
   if(state->mineButton.down) {
-    activeSrc = &buttonSrcRect_down;
+    activeBtnSrc = &buttonSrcRect_down;
   } else {
-    activeSrc = &buttonSrcRect_up;
+    activeBtnSrc = &buttonSrcRect_up;
   }
 
   SDL_RenderCopy(renderer,
                  spriteSheet,
-                 activeSrc,
+                 activeBtnSrc,
                  &mineButtonDstRect);
+
+  //draw lights
+  SDL_Rect mineLightRect_off = {UI_MN_LT_OFF_X,
+                                UI_MN_LT_OFF_Y,
+                                SPRITE_W,
+                                SPRITE_H};
+  
+  SDL_Rect mineLightRect_on = {UI_MN_LT_ON_X,
+                               UI_MN_LT_ON_Y,
+                               SPRITE_W,
+                               SPRITE_H};
+
+  SDL_Rect mineLightDstRect = {state->mineLight.x,
+                               state->mineLight.y,
+                               SPRITE_W,
+                               SPRITE_H};
+  
+  SDL_Rect scanLightRect_off = {UI_SC_LT_OFF_X,
+                                UI_SC_LT_OFF_Y,
+                                SPRITE_W,
+                                SPRITE_H};
+  
+  SDL_Rect scanLightRect_on = {UI_SC_LT_ON_X,
+                               UI_SC_LT_ON_Y,
+                               SPRITE_W,
+                               SPRITE_H};
+
+  SDL_Rect scanLightDstRect = {state->scanLight.x,
+                               state->scanLight.y,
+                               SPRITE_W,
+                               SPRITE_H};
+
+  //draw mine light
+  SDL_Rect *activeMineLightSrc = &mineLightRect_off;
+  if(state->mineLight.on) {
+    activeMineLightSrc = &mineLightRect_on;
+  }
+
+  SDL_RenderCopy(renderer,
+                 spriteSheet,
+                 activeMineLightSrc,
+                 &mineLightDstRect);
+
+  //draw scan light
+  SDL_Rect *activeScanLightSrc = &scanLightRect_off;
+  if(state->scanLight.on) {
+    activeScanLightSrc = &scanLightRect_on;
+  }
+
+  SDL_RenderCopy(renderer,
+                 spriteSheet,
+                 activeScanLightSrc,
+                 &scanLightDstRect);
 }
 
 int x_log_to_real(float x) {

@@ -7,10 +7,10 @@ void game_init() {
   state->quit = false;
   
   state->scanButton = (Button) {10, 10, false};
-  state->mineButton = (Button) {10, 30, false};
+  state->mineButton = (Button) {10, 74, false};
 
-  state->scanLight = (ScanLight) {30, 10, false};
-  state->mineLight = (MineLight) {30, 30, false};
+  state->scanLight = (ScanLight) {74, 10, false};
+  state->mineLight = (MineLight) {74, 74, false};
 
   state->playerX = 0;
   state->playerY = 0;
@@ -56,6 +56,7 @@ void check_button_presses(GameState *state) {
                        UI_BTN_W,
                        UI_BTN_H)) {
     state->scanButton.down = !state->scanButton.down;
+    state->scanLight.on = state->scanButton.down;
   }
 
   //Mine button
@@ -70,6 +71,7 @@ void check_button_presses(GameState *state) {
                        UI_BTN_W,
                        UI_BTN_H)) {
     state->mineButton.down = !state->mineButton.down;
+    state->mineLight.on = state->mineButton.down;
   }
 }
 
