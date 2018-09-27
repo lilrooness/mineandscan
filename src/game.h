@@ -7,7 +7,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+//BOUNDING BOXES
+static const int UI_BTN_W = 32;
+static const int UI_BTN_H = 10;
 
+//SPRITESHEET COORDS
 static const int SPRITE_W = 64;
 static const int SPRITE_H = 64;
 
@@ -97,6 +101,9 @@ typedef struct {
 } GameState;
 
 
+int mousex;
+int mousey;
+
 GameState *state;
 
 void game_init();
@@ -113,8 +120,9 @@ SDL_Texture* load_texture(SDL_Renderer *renderer,
 int render_init();
 
 void handle_input(GameState *state);
-
 void game_loop(GameState *state);
+void check_button_presses(GameState *state);
+bool mouse_inside_bbox(int x, int y, int width, int height);
 
 #define GAME_H
 #endif

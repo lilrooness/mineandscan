@@ -2,19 +2,41 @@
 
 void render_ui(SDL_Renderer *renderer, GameState *state) {
 
-  int srcx = UI_BTN_UP_X;
-  int srcy = UI_BTN_DOWN_Y;
+  SDL_Rect buttonSrcRect_up = {UI_BTN_UP_X, UI_BTN_UP_Y,
+                               SPRITE_W, SPRITE_H};
   
-  SDL_Rect scanButtonSrcRect = {srcx, srcy,
-                                SPRITE_W, SPRITE_H};
+  SDL_Rect buttonSrcRect_down = {UI_BTN_DOWN_X, UI_BTN_DOWN_Y,
+                                 SPRITE_W, SPRITE_H};
   
   SDL_Rect scanButtonDstRect = {state->scanButton.x,
                                 state->scanButton.y,
                                 SPRITE_W, SPRITE_H};
+
+  SDL_Rect mineButtonDstRect = {state->mineButton.x,
+                                state->mineButton.y,
+                                SPRITE_W, SPRITE_H};
+
+  SDL_Rect *activeSrc = &buttonSrcRect_up;
+
+  if(state->scanButton.down) {
+    activeSrc = &buttonSrcRect_down;
+  }
+
   SDL_RenderCopy(renderer,
                  spriteSheet,
-                 &scanButtonSrcRect,
-                 &scanButtonDstRect);                 
+                 activeSrc,
+                 &scanButtonDstRect);
+
+  if(state->mineButton.down) {
+    activeSrc = &buttonSrcRect_down;
+  } else {
+    activeSrc = &buttonSrcRect_up;
+  }
+
+  SDL_RenderCopy(renderer,
+                 spriteSheet,
+                 activeSrc,
+                 &mineButtonDstRect);
 }
 
 int x_log_to_real(float x) {
