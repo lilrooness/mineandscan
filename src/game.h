@@ -1,11 +1,16 @@
 #ifndef GAME_H
 
-
 #include <stdbool.h>
 #include <stdio.h>
 
+#ifdef __linux__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+
+#elif __APPLE__
+#include <SDL2/SDL.h>
+#include <SDL2_image/SDL_image.h>
+#endif
 
 //BOUNDING BOXES
 static const int UI_BTN_W = 32;
