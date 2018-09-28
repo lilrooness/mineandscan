@@ -93,12 +93,20 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                  &scanLightDstRect);
 }
 
-int x_log_to_real(float x) {
-  return (int) x * WIDTH_FAC; // trunc the result
+int x_log_to_real(int x) {
+  return x * WIDTH_FAC; // trunc the result
 }
 
-int y_log_to_real(float y) {
-  return (int) y * HEIGHT_FAC;
+int y_log_to_real(int y) {
+  return y * HEIGHT_FAC;
+}
+
+int x_real_to_log(int x) {
+  return x / WIDTH_FAC;
+}
+
+int y_real_to_log(int y) {
+  return y / WIDTH_FAC;
 }
 
 SDL_Texture* load_texture(SDL_Renderer *renderer,
