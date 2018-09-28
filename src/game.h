@@ -16,14 +16,12 @@
 static const int WINDOW_WIDTH = 640;
 static const int WINDOW_HEIGHT = 480;
  //KEEP THIS ASPECT RATIO!!!!
-static const int GAME_W = 100;
-static const int GAME_H = 75;
-static const float WIDTH_FAC = 6.4f;
-static const float HEIGHT_FAC = 10.4f;
+static const int GAME_WIDTH = 100;
+static const int GAME_HEIGHT = 75;
 
-//BOUNDING BOXES
-static const int UI_BTN_W = 32;
-static const int UI_BTN_H = 10;
+//BOUNDING BOXES LOGICAL
+static const int UI_BTN_W = 10;
+static const int UI_BTN_H = 4;
 
 static const int SPRITE_W_GAME = 20;
 static const int SPRITE_H_GAME = 20;

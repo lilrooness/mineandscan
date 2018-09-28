@@ -9,13 +9,15 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
   SDL_Rect buttonSrcRect_down = {UI_BTN_DOWN_X, UI_BTN_DOWN_Y,
                                  SPRITE_W, SPRITE_H};
   
-  SDL_Rect scanButtonDstRect = {state->scanButton.x,
-                                state->scanButton.y,
-                                SPRITE_W, SPRITE_H};
+  SDL_Rect scanButtonDstRect ={x_log_to_real(state->scanButton.x),
+                               y_log_to_real(state->scanButton.y),
+                               x_log_to_real(SPRITE_W_GAME),
+                               y_log_to_real(SPRITE_H_GAME)};
 
-  SDL_Rect mineButtonDstRect = {state->mineButton.x,
-                                state->mineButton.y,
-                                SPRITE_W, SPRITE_H};
+  SDL_Rect mineButtonDstRect ={x_log_to_real(state->mineButton.x),
+                               y_log_to_real(state->mineButton.y),
+                               x_log_to_real(SPRITE_W_GAME),
+                               y_log_to_real(SPRITE_H_GAME)};
 
   SDL_Rect *activeBtnSrc = &buttonSrcRect_up;
 
@@ -50,10 +52,10 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                                SPRITE_W,
                                SPRITE_H};
 
-  SDL_Rect mineLightDstRect = {state->mineLight.x,
-                               state->mineLight.y,
-                               SPRITE_W,
-                               SPRITE_H};
+  SDL_Rect mineLightDstRect = {x_log_to_real(state->mineLight.x),
+                               y_log_to_real(state->mineLight.y),
+                               x_log_to_real(SPRITE_W_GAME),
+                               y_log_to_real(SPRITE_H_GAME)};
   
   SDL_Rect scanLightRect_off = {UI_SC_LT_OFF_X,
                                 UI_SC_LT_OFF_Y,
@@ -65,10 +67,10 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                                SPRITE_W,
                                SPRITE_H};
 
-  SDL_Rect scanLightDstRect = {state->scanLight.x,
-                               state->scanLight.y,
-                               SPRITE_W,
-                               SPRITE_H};
+  SDL_Rect scanLightDstRect = {x_log_to_real(state->scanLight.x),
+                               y_log_to_real(state->scanLight.y),
+                               x_log_to_real(SPRITE_W_GAME),
+                               y_log_to_real(SPRITE_H_GAME)};
 
   //draw mine light
   SDL_Rect *activeMineLightSrc = &mineLightRect_off;
@@ -94,19 +96,19 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
 }
 
 int x_log_to_real(int x) {
-  return x * WIDTH_FAC; // trunc the result
+  return x * (WINDOW_WIDTH/GAME_WIDTH); // trunc the result
 }
 
 int y_log_to_real(int y) {
-  return y * HEIGHT_FAC;
+  return y * (WINDOW_HEIGHT/GAME_HEIGHT);
 }
 
 int x_real_to_log(int x) {
-  return x / WIDTH_FAC;
+  return x / (WINDOW_WIDTH/GAME_WIDTH);
 }
 
 int y_real_to_log(int y) {
-  return y / WIDTH_FAC;
+  return y / (WINDOW_HEIGHT/GAME_HEIGHT);
 }
 
 SDL_Texture* load_texture(SDL_Renderer *renderer,

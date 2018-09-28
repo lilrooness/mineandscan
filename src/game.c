@@ -2,17 +2,19 @@
 
 void game_init() {
   mousex = 0; mousey = 0;
-  up_key=false; down_key=false; left_key=false; right_key=false;
+
+  up_key=false; down_key=false;
+  left_key=false; right_key=false;
 
   state = malloc(sizeof(GameState));
 
   state->quit = false;
   
-  state->scanButton = (Button) {10, 10, false};
-  state->mineButton = (Button) {10, 74, false};
+  state->scanButton = (Button) {5, 5, false};
+  state->mineButton = (Button) {5, 30, false};
 
-  state->scanLight = (ScanLight) {74, 10, false};
-  state->mineLight = (MineLight) {74, 74, false};
+  state->scanLight = (ScanLight) {17, 5, false};
+  state->mineLight = (MineLight) {17, 30, false};
 
   state->playerX = 0;
   state->playerY = 0;
@@ -77,10 +79,10 @@ void check_button_presses(GameState *state) {
 
   //Scan button
   int scanButtonX = state->scanButton.x
-    + (SPRITE_W/2 - UI_BTN_W/2);
+    + (SPRITE_W_GAME/2 - UI_BTN_W/2);
 
   int scanButtonY = state->scanButton.y
-    + (SPRITE_H/2 - UI_BTN_H/2);
+    + (SPRITE_H_GAME/2 - UI_BTN_H/2);
 
   if(mouse_inside_bbox(scanButtonX,
                        scanButtonY,
@@ -92,10 +94,10 @@ void check_button_presses(GameState *state) {
 
   //Mine button
   int mineButtonX = state->mineButton.x
-    + (SPRITE_W/2 - UI_BTN_W/2);
+    + (SPRITE_W_GAME/2 - UI_BTN_W/2);
 
   int mineButtonY = state->mineButton.y
-    + (SPRITE_H/2 - UI_BTN_H/2);
+    + (SPRITE_H_GAME/2 - UI_BTN_H/2);
 
   if(mouse_inside_bbox(mineButtonX,
                        mineButtonY,
@@ -107,10 +109,13 @@ void check_button_presses(GameState *state) {
 }
 
 bool mouse_inside_bbox(int x, int y, int width, int height) {
-  return (mousex > x
-          && mousex < x + width
-          && mousey > y
-          && mousey < y + height);
+  int mousexLog = x_real_to_log(mousex);
+  int mouseyLog = y_real_to_log(mousey);
+
+  return (mousexLog > x
+          && mousexLog < x + width
+          && mouseyLog > y
+          && mouseyLog < y + height);
 }
 
 void handle_key_event(SDL_Event e, bool keyDown) {
