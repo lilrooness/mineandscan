@@ -1,7 +1,7 @@
-CC := gcc 
+CC := gcc -Wno-discarded-qualifiers
 
 all:
-	gcc -c src/*.c
+	$(CC) -c src/*.c
 	$(CC) *.o `sdl2-config --libs` -lSDL2_image 
 	rm *.o
 

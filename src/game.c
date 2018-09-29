@@ -10,14 +10,16 @@ void game_init() {
 
   state->quit = false;
   
-  state->scanButton = (Button) {5, 5, false};
-  state->mineButton = (Button) {5, 30, false};
+  state->scanButton = (Button) {3, 8, false};
+  state->mineButton = (Button) {3, 33, false};
 
-  state->scanLight = (ScanLight) {17, 5, false};
-  state->mineLight = (MineLight) {17, 30, false};
+  state->scanLight = (ScanLight) {17, 8, false};
+  state->mineLight = (MineLight) {17, 33, false};
 
   state->playerX = 0;
   state->playerY = 0;
+
+  state->screen_mode = 2;
 
   nenemies = 10;
   state->enemies = malloc(nenemies * sizeof(Enemy));
@@ -49,29 +51,40 @@ void handle_input(GameState *state) {
 }
 
 void game_loop(GameState *state) {
-  process_events(state);
-  
-  int xdirection = 0;
-  int ydirection = 0;
 
-  if(up_key) {
-    ydirection -= 1;
-  }
-  if(down_key) {
-    ydirection += 1;
-  }
-  if(left_key) {
-    xdirection -= 1;
-  }
-  if(right_key) {
-    xdirection += -1;
-  }
+  while(!state->quit) {
+    handle_input(state);
+    
+    SDL_Rect rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+    SDL_RenderFillRect(renderer, &rect);
+    
+    render_ui(renderer, state);
 
-  int xspeed = xdirection * speed;
-  int yspeed = ydirection * speed;
 
-  state->playerX += xspeed;
-  state->playerY += yspeed;
+    int xdirection = 0;
+    int ydirection = 0;
+    
+    if(up_key) {
+      ydirection -= 1;
+    }
+    if(down_key) {
+      ydirection += 1;
+    }
+    if(left_key) {
+      xdirection -= 1;
+    }
+    if(right_key) {
+      xdirection += -1;
+    }
+    
+    int xspeed = xdirection * speed;
+    int yspeed = ydirection * speed;
+    
+    state->playerX += xspeed;
+    state->playerY += yspeed;
+    
+    SDL_RenderPresent(renderer);
+  }
 }
 
 void check_button_presses(GameState *state) {
@@ -137,14 +150,3 @@ void handle_key_event(SDL_Event e, bool keyDown) {
   }
 }
 
-void process_events(GameState *state) {
-    while(!state->quit) {
-    handle_input(state);
-
-    SDL_Rect rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-    SDL_RenderFillRect(renderer, &rect);
-
-    render_ui(renderer, state);
-    SDL_RenderPresent(renderer);
-  }
-}
