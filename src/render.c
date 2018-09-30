@@ -62,7 +62,35 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                    &tileDstRect);
     
   }
+
+  //render text
+  char textBuff[100];
+  sprintf(textBuff, "X: %d - Y: %d",
+          state->playerX,
+          state->playerY);
   
+  SDL_Texture *text;
+  text = text_to_texture(textBuff,
+                         (SDL_Color){
+                           0xFF,
+                             0xFF,
+                             0xFF,
+                             0xFF});
+  int textWidth;
+  int textHeight;
+  
+  SDL_QueryTexture(text, NULL, NULL, &textWidth, &textHeight);
+
+  SDL_Rect textSrcRect = {0, 0, textWidth, textHeight};
+  SDL_Rect textDstRect = {x_log_to_real(DISPLAY_SCREEN_X + 35),
+                          y_log_to_real(DISPLAY_SCREEN_Y + 67),
+                          textWidth,
+                          textHeight};
+  
+  SDL_RenderCopy(renderer, text,
+                 &textSrcRect,
+                 &textDstRect);
+
   SDL_SetRenderDrawColor(renderer,
                          0x00,
                          0x00,
@@ -194,6 +222,20 @@ int render_init() {
            SDL_GetError());
     return 1;
   }
+
+  if(TTF_Init() == -1) {
+    printf("SDL could not initialise TTF %s",
+           TTF_GetError());
+    return 1;
+  }
+
+  font = TTF_OpenFont("res/m5x7.ttf", 16);
+
+  if(font == NULL) {
+    printf("SDL could not open font %s",
+           TTF_GetError());
+  }
+  
   
   window = SDL_CreateWindow("Path",
                             SDL_WINDOWPOS_UNDEFINED,
@@ -221,4 +263,31 @@ int render_init() {
                              "res/minespritesheet.bmp");
 
   return 0;
+}
+
+SDL_Texture* text_to_texture(char *string, SDL_Color color) {
+  
+  SDL_Surface *surface = NULL;
+  SDL_Texture *texture = NULL;
+  
+  surface = TTF_RenderText_Solid(font, string, color);
+
+  if(surface == NULL) {
+    printf("unable to render text to font %s",
+           TTF_GetError());
+
+    return NULL;
+  }
+
+  texture = SDL_CreateTextureFromSurface(renderer, surface);
+  SDL_FreeSurface(surface);
+  
+  if(texture == NULL) {
+    printf("unable to create texture from rendererd text %s",
+           SDL_GetError());
+
+    return NULL;
+  }
+
+  return texture;
 }

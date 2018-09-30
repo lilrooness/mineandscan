@@ -7,10 +7,12 @@
 #ifdef __linux__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #elif __APPLE__
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
+#include <SDL2_ttf/SDL_ttf.h>
 #endif
 
 //static const int WINDOW_WIDTH = 640;
@@ -201,6 +203,7 @@ bool right_key;
 SDL_Window *window;
 SDL_Renderer *renderer;
 SDL_Texture *spriteSheet;
+TTF_Font *font;
 
 //FUNCTIONS
 void render_ui(SDL_Renderer *renderer, GameState *state);
@@ -217,6 +220,6 @@ void game_loop(GameState *state);
 void check_button_presses(GameState *state);
 bool mouse_inside_bbox(int x, int y, int width, int height);
 void handle_key_event(SDL_Event e, bool keyDown);
-
+SDL_Texture* text_to_texture(char *text, SDL_Color color);
 #define GAME_H
 #endif

@@ -74,7 +74,7 @@ void game_loop(GameState *state) {
       xdirection -= 1;
     }
     if(right_key) {
-      xdirection += -1;
+      xdirection += 1;
     }
     
     int xspeed = xdirection * speed;
