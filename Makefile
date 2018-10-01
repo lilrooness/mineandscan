@@ -7,6 +7,6 @@ all:
 
 osx: 
 	gcc -c src/*.c
-	$(CC) *.o -framework SDL2 -framework SDL2_image SDL2_ttf
+	$(CC) *.o -framework SDL2 -framework SDL2_image -framework SDL2_ttf
 	rm *.o
 
