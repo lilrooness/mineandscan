@@ -18,6 +18,8 @@
 //static const int WINDOW_WIDTH = 640;
 //static const int WINDOW_HEIGHT = 480;
 
+#define FRAMES_PER_SECOND 30
+
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 

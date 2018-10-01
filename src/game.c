@@ -53,6 +53,9 @@ void handle_input(GameState *state) {
 void game_loop(GameState *state) {
 
   while(!state->quit) {
+
+    int frameStart = SDL_GetTicks();
+    
     handle_input(state);
     
     SDL_Rect rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
@@ -84,6 +87,13 @@ void game_loop(GameState *state) {
     state->playerY += yspeed;
     
     SDL_RenderPresent(renderer);
+
+    int frameEnd = SDL_GetTicks();
+    int frameTime = frameEnd - frameStart;
+
+    if(frameTime < (1000 / FRAMES_PER_SECOND)) {
+      SDL_Delay((1000/FRAMES_PER_SECOND) - frameTime);
+    }
   }
 }
 
