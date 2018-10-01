@@ -2,7 +2,7 @@ CC := gcc -Wno-discarded-qualifiers
 
 all:
 	$(CC) -c src/*.c
-	$(CC) *.o `sdl2-config --libs` -lSDL2_image -lSDL2_ttf
+	$(CC) *.o `sdl2-config --libs` -lSDL2_image -lSDL2_ttf -lm
 	rm *.o
 
 osx: 
