@@ -130,6 +130,16 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                  activeBtnSrc,
                  &mineButtonDstRect);
 
+  //draw enemies
+  
+  //scan mode
+  if(state->screen_mode == 2) {
+    render_enemies(state);
+  } else if(state->screen_mode == 1) {
+    //mine mode
+    render_mines(state);
+  }
+
   //draw lights
   SDL_Rect mineLightDstRect = {x_log_to_real(state->mineLight.x),
                                y_log_to_real(state->mineLight.y),
@@ -291,3 +301,41 @@ SDL_Texture* text_to_texture(char *string, SDL_Color color) {
 
   return texture;
 }
+
+void render_enemies(GameState *state) {
+  int i=0;
+  Enemy *tmp;
+
+  for(i=0; i<nenemies; i++) {
+    tmp = state->enemies + (i*sizeof(Enemy));
+    
+    if(enemy_in_range(tmp, state)) {
+      float ex = tmp->x - (state->playerX - SCAN_RANGE/2);
+      float ey = tmp->y - (state->playerY - SCAN_RANGE/2);
+
+      float screenWidth =SPRITE_W_GAME * (DISPLAY_SCREEN_WIDTH);
+      float screenHeight=SPRITE_H_GAME *(DISPLAY_SCREEN_HEIGHT);
+      float scanRange = SCAN_RANGE;
+
+      int screenPosX = (screenWidth / scanRange) * ex;
+      int screenPosY = (screenHeight / scanRange) * ey;
+
+      SDL_Rect dstRect = (SDL_Rect){
+        x_log_to_real(DISPLAY_SCREEN_X + screenPosX - SPRITE_W_GAME/2),
+        y_log_to_real(DISPLAY_SCREEN_Y + screenPosY - SPRITE_H_GAME/2),
+        x_log_to_real(SPRITE_W_GAME),
+        y_log_to_real(SPRITE_H_GAME)
+      };
+      
+      SDL_RenderCopy(renderer,
+                     spriteSheet,
+                     &ENEMY_SRC,
+                     &dstRect);
+    }
+  }
+}
+
+void render_mines(GameState *state) {
+  
+}
+

@@ -19,7 +19,7 @@ void game_init() {
   state->playerX = 0;
   state->playerY = 0;
 
-  state->screen_mode = 2;
+  state->screen_mode = -1;
 
   nenemies = 10;
   state->enemies = malloc(nenemies * sizeof(Enemy));
@@ -113,6 +113,12 @@ void check_button_presses(GameState *state) {
                        UI_BTN_H)) {
     state->scanButton.down = !state->scanButton.down;
     state->scanLight.on = state->scanButton.down;
+
+    if(state->scanLight.on) {
+      state->screen_mode = 2;
+      state->mineLight.on = false;
+      state->mineButton.down = false;
+    }
   }
 
   //Mine button
@@ -128,6 +134,12 @@ void check_button_presses(GameState *state) {
                        UI_BTN_H)) {
     state->mineButton.down = !state->mineButton.down;
     state->mineLight.on = state->mineButton.down;
+
+    if(state->scanLight.on) {
+      state->screen_mode = 1;
+      state->scanLight.on = false;
+      state->scanButton.down = false;
+    }
   }
 }
 
@@ -160,3 +172,22 @@ void handle_key_event(SDL_Event e, bool keyDown) {
   }
 }
 
+float distance(float ax, float ay, float bx, float by) {
+  return sqrt(pow(bx - ax, 2) + pow(by - ay, 2));
+}
+
+bool enemy_in_range(Enemy *e, GameState * state) {
+  int px = state->playerX;
+  int py = state->playerY;
+
+  int halfRange = SCAN_RANGE/2;
+  if(e->x > px - halfRange
+     && e->x < px + halfRange
+     && e->y > py - halfRange
+     && e->y < py + halfRange) {
+
+    return true;
+  }
+
+  return false;
+}

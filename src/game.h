@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #ifdef __linux__
 #include <SDL2/SDL.h>
@@ -18,7 +19,7 @@
 //static const int WINDOW_WIDTH = 640;
 //static const int WINDOW_HEIGHT = 480;
 
-#define FRAMES_PER_SECOND 30
+#define FRAMES_PER_SECOND 60
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -26,6 +27,8 @@
 //KEEP THIS ASPECT RATIO!!!!
 #define GAME_WIDTH 100
 #define GAME_HEIGHT 75
+
+#define SCAN_RANGE 100
 
 //BOUNDING BOXES LOGICAL
 #define UI_BTN_W 10
@@ -68,6 +71,18 @@
 #define UI_BTN_DOWN_X 64
 #define UI_BTN_DOWN_Y 64
 
+#define UI_CIRCLE_GREEN_X 256
+#define UI_CIRCLE_GREEN_Y 0
+
+#define UI_CIRCLE_FILL_GREEN_X 320
+#define UI_CIRCLE_FILL_GREEN_Y 0
+
+#define UI_CIRCLE_RED_X 384
+#define UI_CIRCLE_RED_Y 0
+
+#define UI_CIRCLE_FILL_RED_X 448
+#define UI_CIRCLE_FILL_RED_Y 0
+
 #define UI_EDGE_TL_X 256
 #define UI_EDGE_TL_Y 128
 
@@ -95,6 +110,18 @@
 #define UI_CENTER_X 512
 #define UI_CENTER_Y 128
 
+static const SDL_Rect ENEMY_SRC = {
+  UI_CIRCLE_RED_X,
+  UI_CIRCLE_RED_Y,
+  SPRITE_W, SPRITE_H
+};
+
+static const SDL_Rect ENEMY_ALERT_SRC = {
+  UI_CIRCLE_FILL_RED_X,
+  UI_CIRCLE_FILL_RED_Y,
+  SPRITE_W, SPRITE_H
+};
+
 static const SDL_Rect BUTTON_SRC_RECT_UP = {
   UI_BTN_UP_X, UI_BTN_UP_Y,
   SPRITE_W, SPRITE_H};
@@ -119,15 +146,14 @@ static const SDL_Rect SCAN_LIGHT_SRC_RECT_ON = {
   UI_SC_LT_ON_X, UI_SC_LT_ON_Y,
   SPRITE_W, SPRITE_H};
 
-#define SCREEN_TILES_LENGTH 16
-#define DISPLAY_SCREEN_X 10
-#define DISPLAY_SCREEN_Y 0
-#define DISPLAY_SCREEN_WIDTH 4
-#define DISPLAY_SCREEN_HEIGHT 4
-static const int SCREEN_TILES[] = {1,2,2,3,
-                                     4,5,5,6,
-                                     4,5,5,6,
-                                     7,8,8,9};
+#define SCREEN_TILES_LENGTH 9
+#define DISPLAY_SCREEN_X 20
+#define DISPLAY_SCREEN_Y 10
+#define DISPLAY_SCREEN_WIDTH 3
+#define DISPLAY_SCREEN_HEIGHT 3
+static const int SCREEN_TILES[] = {1,2,3,
+                                   4,5,6,
+                                   7,8,9};
 
 static const int speed = 1;
 
@@ -183,7 +209,7 @@ typedef struct {
   int playerY;
 
   Enemy *enemies;
-  int screen_mode; //mine=1 scan=2
+  int screen_mode; //mine=1 scan=2 none=-1
 } GameState;
 
 //GLOBALS
@@ -215,13 +241,18 @@ int x_real_to_log(int x);
 int y_real_to_log(int y);
 SDL_Texture* load_texture(SDL_Renderer *renderer,
                           char *filename);
+SDL_Texture* text_to_texture(char *text, SDL_Color color);
 int render_init();
+void render_enemies(GameState *state);
+void render_mines(GameState *state);
 
 void handle_input(GameState *state);
 void game_loop(GameState *state);
 void check_button_presses(GameState *state);
 bool mouse_inside_bbox(int x, int y, int width, int height);
 void handle_key_event(SDL_Event e, bool keyDown);
-SDL_Texture* text_to_texture(char *text, SDL_Color color);
+float distance(float ax, float ay, float bx, float by);
+bool enemy_in_range(Enemy *enemy, GameState * state);
+
 #define GAME_H
 #endif
