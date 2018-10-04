@@ -57,11 +57,6 @@ void game_loop(GameState *state) {
     int frameStart = SDL_GetTicks();
     
     handle_input(state);
-    
-    SDL_Rect rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-    SDL_RenderFillRect(renderer, &rect);
-    
-    render_ui(renderer, state);
 
 
     int xdirection = 0;
@@ -85,7 +80,11 @@ void game_loop(GameState *state) {
     
     state->playerX += xspeed;
     state->playerY += yspeed;
-    
+
+
+    SDL_Rect rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+    SDL_RenderFillRect(renderer, &rect);
+    render_ui(renderer, state);
     SDL_RenderPresent(renderer);
 
     int frameEnd = SDL_GetTicks();
@@ -118,6 +117,8 @@ void check_button_presses(GameState *state) {
       state->screen_mode = 2;
       state->mineLight.on = false;
       state->mineButton.down = false;
+    } else {
+      state -> screen_mode = -1;
     }
   }
 
@@ -139,6 +140,8 @@ void check_button_presses(GameState *state) {
       state->screen_mode = 1;
       state->scanLight.on = false;
       state->scanButton.down = false;
+    } else {
+      state->screen_mode = -1;
     }
   }
 }
