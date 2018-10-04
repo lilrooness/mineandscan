@@ -1,10 +1,5 @@
 #ifndef GAME_H
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
 #ifdef __linux__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -14,7 +9,17 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include <SDL2_ttf/SDL_ttf.h>
+#elif __WIN32
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #endif
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
 
 //static const int WINDOW_WIDTH = 640;
 //static const int WINDOW_HEIGHT = 480;
@@ -43,31 +48,31 @@
 
 #define UI_MN_LT_OFF_X 0
 #define UI_MN_LT_OFF_Y 0
- 
+
 #define UI_MN_LT_ON_X 128
 #define UI_MN_LT_ON_Y 0
- 
+
 #define UI_SC_LT_OFF_X 64
 #define UI_SC_LT_OFF_Y 0
- 
+
 #define UI_SC_LT_ON_X 192
 #define UI_SC_LT_ON_Y 0
- 
+
 #define UI_RED_LED_OFF_X 128
 #define UI_RED_LED_OFF_Y 64
- 
+
 #define UI_RED_LED_ON_X 256
 #define UI_RED_LED_ON_Y 64
- 
+
 #define UI_GREEN_LED_OFF_X 192
 #define UI_GREEN_LED_OFF_Y 64
- 
+
 #define UI_GREEN_LED_ON_X 320
 #define UI_GREEN_LED_ON_Y 64
- 
+
 #define UI_BTN_UP_X 0
 #define UI_BTN_UP_Y 64
- 
+
 #define UI_BTN_DOWN_X 64
 #define UI_BTN_DOWN_Y 64
 
@@ -110,6 +115,9 @@
 #define UI_CENTER_X 512
 #define UI_CENTER_Y 128
 
+#define UI_RETICLE_X 512
+#define UI_RETICLE_Y 0
+
 static const SDL_Rect ENEMY_SRC = {
   UI_CIRCLE_RED_X,
   UI_CIRCLE_RED_Y,
@@ -145,6 +153,10 @@ static const SDL_Rect SCAN_LIGHT_SRC_RECT_OFF = {
 static const SDL_Rect SCAN_LIGHT_SRC_RECT_ON = {
   UI_SC_LT_ON_X, UI_SC_LT_ON_Y,
   SPRITE_W, SPRITE_H};
+
+static const SDL_Rect RETICLE_SRC_RECT = {
+ UI_RETICLE_X, UI_RETICLE_Y,
+ SPRITE_W, SPRITE_H};
 
 #define SCREEN_TILES_LENGTH 9
 #define DISPLAY_SCREEN_X 20
@@ -231,6 +243,7 @@ bool right_key;
 SDL_Window *window;
 SDL_Renderer *renderer;
 SDL_Texture *spriteSheet;
+
 TTF_Font *font;
 
 //FUNCTIONS

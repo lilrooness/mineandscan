@@ -15,15 +15,15 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
   for(i=0; i<SCREEN_TILES_LENGTH; i++) {
     int x = i%(DISPLAY_SCREEN_WIDTH);
     int y = i / DISPLAY_SCREEN_HEIGHT;
-    
+
     tileDstRect.x = x_log_to_real(x*SPRITE_W_GAME
                                   + DISPLAY_SCREEN_X);
     tileDstRect.y = y_log_to_real(y*SPRITE_H_GAME
                                   + DISPLAY_SCREEN_Y);
     tileDstRect.w = x_log_to_real(SPRITE_W_GAME);
     tileDstRect.h = y_log_to_real(SPRITE_H_GAME);
-    
-    
+
+
     switch(SCREEN_TILES[i]) {
     case 1:
       tileSrcRect.x = UI_EDGE_TL_X;
@@ -55,20 +55,27 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
     default:
       tileSrcRect.x = UI_CENTER_X;
     }
-    
+
     SDL_RenderCopy(renderer,
                    spriteSheet,
                    &tileSrcRect,
                    &tileDstRect);
-    
+
   }
+
+  SDL_Rect reticleDstRect = {x_log_to_real(DISPLAY_SCREEN_X + (DISPLAY_SCREEN_WIDTH*SPRITE_W_GAME)/2 - SPRITE_W_GAME/2),
+                             y_log_to_real(DISPLAY_SCREEN_Y + (DISPLAY_SCREEN_HEIGHT*SPRITE_H_GAME)/2 - SPRITE_H_GAME/2),
+                             x_log_to_real(SPRITE_W_GAME),
+                             y_log_to_real(SPRITE_H_GAME)};
+
+  SDL_RenderCopy(renderer, spriteSheet, &RETICLE_SRC_RECT, &reticleDstRect);
 
   //render text
   char textBuff[100];
   sprintf(textBuff, "X: %d - Y: %d",
           state->playerX,
           state->playerY);
-  
+
   SDL_Texture *text;
   text = text_to_texture(textBuff,
                          (SDL_Color){
@@ -78,7 +85,7 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                              0xFF});
   int textWidth;
   int textHeight;
-  
+
   SDL_QueryTexture(text, NULL, NULL, &textWidth, &textHeight);
 
   SDL_Rect textSrcRect = {0, 0, textWidth, textHeight};
@@ -86,7 +93,7 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                           y_log_to_real(DISPLAY_SCREEN_Y + 67),
                           textWidth,
                           textHeight};
-  
+
   SDL_RenderCopy(renderer, text,
                  &textSrcRect,
                  &textDstRect);
@@ -96,7 +103,7 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                          0x00,
                          0x00,
                          0xFF);
-  
+
   //draw buttons
   SDL_Rect scanButtonDstRect ={x_log_to_real(state->scanButton.x),
                                y_log_to_real(state->scanButton.y),
@@ -131,7 +138,7 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                  &mineButtonDstRect);
 
   //draw enemies
-  
+
   //scan mode
   if(state->screen_mode == 2) {
     render_enemies(state);
@@ -145,7 +152,7 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                                y_log_to_real(state->mineLight.y),
                                x_log_to_real(SPRITE_W_GAME),
                                y_log_to_real(SPRITE_H_GAME)};
-  
+
 
   SDL_Rect scanLightDstRect = {x_log_to_real(state->scanLight.x),
                                y_log_to_real(state->scanLight.y),
@@ -196,7 +203,7 @@ SDL_Texture* load_texture(SDL_Renderer *renderer,
 
   SDL_Texture *texture = NULL;
   SDL_Surface *loadedSurface = NULL;
-  
+
   loadedSurface = IMG_Load(filename);
 
   if(loadedSurface == NULL) {
@@ -204,14 +211,14 @@ SDL_Texture* load_texture(SDL_Renderer *renderer,
            filename,
            IMG_GetError());
   }
-  
+
   SDL_SetColorKey(loadedSurface,
                   SDL_TRUE,
                   SDL_MapRGB(loadedSurface->format,
                              0xFF,
                              0,
                              0xFF));
-  
+
   texture = SDL_CreateTextureFromSurface(renderer,
                                          loadedSurface);
 
@@ -226,7 +233,7 @@ int render_init() {
            SDL_GetError());
     return 1;
   }
-  
+
   if(!IMG_Init(IMG_INIT_PNG)) {
     printf("SDL could not initialise PNG %s",
            SDL_GetError());
@@ -245,24 +252,24 @@ int render_init() {
     printf("SDL could not open font %s",
            TTF_GetError());
   }
-  
-  
+
+
   window = SDL_CreateWindow("Path",
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
                             WINDOW_WIDTH, WINDOW_HEIGHT,
                             SDL_WINDOW_SHOWN);
-  
+
   renderer = SDL_CreateRenderer(window,
                                 -1,
                                 SDL_RENDERER_ACCELERATED);
-  
+
   if(renderer == NULL) {
     printf("SDL could not create renderer: %s",
            SDL_GetError());
     return 1;
   }
-  
+
   SDL_SetRenderDrawColor(renderer,
                          0x00,
                          0x00,
@@ -276,10 +283,10 @@ int render_init() {
 }
 
 SDL_Texture* text_to_texture(char *string, SDL_Color color) {
-  
+
   SDL_Surface *surface = NULL;
   SDL_Texture *texture = NULL;
-  
+
   surface = TTF_RenderText_Solid(font, string, color);
 
   if(surface == NULL) {
@@ -291,7 +298,7 @@ SDL_Texture* text_to_texture(char *string, SDL_Color color) {
 
   texture = SDL_CreateTextureFromSurface(renderer, surface);
   SDL_FreeSurface(surface);
-  
+
   if(texture == NULL) {
     printf("unable to create texture from rendererd text %s",
            SDL_GetError());
@@ -308,7 +315,7 @@ void render_enemies(GameState *state) {
 
   for(i=0; i<nenemies; i++) {
     tmp = state->enemies + (i*sizeof(Enemy));
-    
+
     if(enemy_in_range(tmp, state)) {
       float ex = tmp->x - (state->playerX - SCAN_RANGE/2);
       float ey = tmp->y - (state->playerY - SCAN_RANGE/2);
@@ -326,7 +333,7 @@ void render_enemies(GameState *state) {
         x_log_to_real(SPRITE_W_GAME),
         y_log_to_real(SPRITE_H_GAME)
       };
-      
+
       SDL_RenderCopy(renderer,
                      spriteSheet,
                      &ENEMY_SRC,
@@ -336,6 +343,6 @@ void render_enemies(GameState *state) {
 }
 
 void render_mines(GameState *state) {
-  
+
 }
 
