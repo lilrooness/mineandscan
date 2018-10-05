@@ -9,17 +9,17 @@ void game_init() {
   state = malloc(sizeof(GameState));
 
   state->quit = false;
-  
-  state->scanButton = (Button) {3, 8, false};
+
+  state->scanButton = (Button) {3, 8, true};
   state->mineButton = (Button) {3, 33, false};
 
-  state->scanLight = (ScanLight) {17, 8, false};
+  state->scanLight = (ScanLight) {17, 8, true};
   state->mineLight = (MineLight) {17, 33, false};
 
-  state->playerX = 0;
+  state->playerX = 30;
   state->playerY = 0;
 
-  state->screen_mode = -1;
+  state->screen_mode = 2;
 
   nenemies = 10;
   state->enemies = malloc(nenemies * sizeof(Enemy));
@@ -53,15 +53,18 @@ void handle_input(GameState *state) {
 void game_loop(GameState *state) {
 
   while(!state->quit) {
-
     int frameStart = SDL_GetTicks();
-    
+
+    for(int i=0; i<nenemies; i++) {
+        update_enemy(state->enemies + (i*sizeof(Enemy)), state);
+    }
+
     handle_input(state);
 
 
     int xdirection = 0;
     int ydirection = 0;
-    
+
     if(up_key) {
       ydirection -= 1;
     }
@@ -74,10 +77,10 @@ void game_loop(GameState *state) {
     if(right_key) {
       xdirection += 1;
     }
-    
+
     int xspeed = xdirection * speed;
     int yspeed = ydirection * speed;
-    
+
     state->playerX += xspeed;
     state->playerY += yspeed;
 
@@ -179,18 +182,47 @@ float distance(float ax, float ay, float bx, float by) {
   return sqrt(pow(bx - ax, 2) + pow(by - ay, 2));
 }
 
-bool enemy_in_range(Enemy *e, GameState * state) {
+bool enemy_in_range(Enemy *e, GameState * state, int range) {
   int px = state->playerX;
   int py = state->playerY;
 
-  int halfRange = SCAN_RANGE/2;
-  if(e->x > px - halfRange
-     && e->x < px + halfRange
-     && e->y > py - halfRange
-     && e->y < py + halfRange) {
+  if(e->x > px - range
+     && e->x < px + range
+     && e->y > py - range
+     && e->y < py + range) {
 
     return true;
   }
 
   return false;
+}
+
+SDL_Point get_approx_vector_to_player(Enemy *enemy, GameState *state) {
+    SDL_Point vector = {state->playerX - enemy->x, state->playerY - enemy->y};
+    if(vector.x > 0) {
+        vector.x = 1;
+    } else if(vector.x < 0) {
+        vector.x = -1;
+    } else {
+        vector.x = 0;
+    }
+
+    if(vector.y > 0) {
+        vector.y = 1;
+    } else if(vector.y < 0) {
+        vector.y = -1;
+    } else {
+        vector.y = 0;
+    }
+
+    return vector;
+}
+
+void update_enemy(Enemy *enemy, GameState *state) {
+    float dist = distance(state->playerX, state->playerY, enemy->x, enemy->y);
+    if(dist <= ATTRACTION_RANGE) {
+        SDL_Point vector = get_approx_vector_to_player(enemy, state);
+        enemy->x += vector.x;
+        enemy->y += vector.y;
+    }
 }

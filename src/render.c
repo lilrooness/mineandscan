@@ -316,7 +316,7 @@ void render_enemies(GameState *state) {
   for(i=0; i<nenemies; i++) {
     tmp = state->enemies + (i*sizeof(Enemy));
 
-    if(enemy_in_range(tmp, state)) {
+    if(enemy_in_range(tmp, state, SCAN_RANGE/2)) {
       float ex = tmp->x - (state->playerX - SCAN_RANGE/2);
       float ey = tmp->y - (state->playerY - SCAN_RANGE/2);
 

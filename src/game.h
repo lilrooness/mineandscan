@@ -1,5 +1,10 @@
 #ifndef GAME_H
 
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
 #ifdef __linux__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -15,10 +20,6 @@
 #include <SDL_ttf.h>
 #endif
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 
 
 //static const int WINDOW_WIDTH = 640;
@@ -168,6 +169,7 @@ static const int SCREEN_TILES[] = {1,2,3,
                                    7,8,9};
 
 static const int speed = 1;
+static const int ATTRACTION_RANGE = SCAN_RANGE/3;
 
 typedef struct {
   int x;
@@ -265,7 +267,9 @@ void check_button_presses(GameState *state);
 bool mouse_inside_bbox(int x, int y, int width, int height);
 void handle_key_event(SDL_Event e, bool keyDown);
 float distance(float ax, float ay, float bx, float by);
-bool enemy_in_range(Enemy *enemy, GameState * state);
+bool enemy_in_range(Enemy *enemy, GameState *state, int range);
+SDL_Point get_approx_vector_to_player(Enemy *enemy, GameState *state);
+void update_enemy(Enemy *enemy, GameState *state);
 
 #define GAME_H
 #endif
