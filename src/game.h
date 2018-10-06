@@ -170,6 +170,7 @@ static const int SCREEN_TILES[] = {1,2,3,
 
 static const int speed = 1;
 static const int ATTRACTION_RANGE = SCAN_RANGE/3;
+static const int KILL_RANGE = 2;
 
 typedef struct {
   int x;
@@ -210,6 +211,12 @@ enum ComponentType {UI_RED_LED,
 
 typedef enum ComponentType ComponentType;
 
+enum GameMode {
+MENU, PLAY, GAME_OVER
+};
+
+typedef enum GameMode GameMode;
+
 typedef struct {
   bool quit;
 
@@ -224,6 +231,8 @@ typedef struct {
 
   Enemy *enemies;
   int screen_mode; //mine=1 scan=2 none=-1
+
+  GameMode mode;
 } GameState;
 
 //GLOBALS
@@ -260,6 +269,7 @@ SDL_Texture* text_to_texture(char *text, SDL_Color color);
 int render_init();
 void render_enemies(GameState *state);
 void render_mines(GameState *state);
+void render_gameover_screen(SDL_Renderer *renderer, GameState *state);
 
 void handle_input(GameState *state);
 void game_loop(GameState *state);
@@ -270,6 +280,9 @@ float distance(float ax, float ay, float bx, float by);
 bool enemy_in_range(Enemy *enemy, GameState *state, int range);
 SDL_Point get_approx_vector_to_player(Enemy *enemy, GameState *state);
 void update_enemy(Enemy *enemy, GameState *state);
+void do_play_tick(GameState *state);
+void do_gameover_tick(GameState *state);
+void restart_game(GameState *state);
 
 #define GAME_H
 #endif

@@ -7,6 +7,14 @@ void game_init() {
   left_key=false; right_key=false;
 
   state = malloc(sizeof(GameState));
+  nenemies = 10;
+  state->enemies = malloc(nenemies * sizeof(Enemy));
+  restart_game(state);
+}
+
+void restart_game(GameState *state) {
+
+  state->mode = PLAY;
 
   state->quit = false;
 
@@ -16,20 +24,19 @@ void game_init() {
   state->scanLight = (ScanLight) {17, 8, true};
   state->mineLight = (MineLight) {17, 33, false};
 
-  state->playerX = 30;
+  state->playerX = 100;
   state->playerY = 0;
 
   state->screen_mode = 2;
-
-  nenemies = 10;
-  state->enemies = malloc(nenemies * sizeof(Enemy));
 
   int maxRand = 100;
 
   for(int i=0; i<nenemies; i++) {
     int x = (int)rand()%maxRand;
     int y = (int)rand()%maxRand;
-    state->enemies[i] = (Enemy) {x, y, false};
+    state->enemies[i].x = x;
+    state->enemies[i].y = y;
+    state->enemies[i].alerted = false;
   }
 }
 
@@ -55,6 +62,48 @@ void game_loop(GameState *state) {
   while(!state->quit) {
     int frameStart = SDL_GetTicks();
 
+    if(state->mode == PLAY) {
+        do_play_tick(state);
+    } else if (state->mode == GAME_OVER) {
+        do_gameover_tick(state);
+    }
+
+
+    SDL_Rect rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+    SDL_RenderFillRect(renderer, &rect);
+
+    if(state->mode == PLAY) {
+        render_ui(renderer, state);
+    } else if(state->mode == GAME_OVER) {
+        render_gameover_screen(renderer, state);
+    }
+
+
+    SDL_RenderPresent(renderer);
+
+    int frameEnd = SDL_GetTicks();
+    int frameTime = frameEnd - frameStart;
+
+    if(frameTime < (1000 / FRAMES_PER_SECOND)) {
+      SDL_Delay((1000/FRAMES_PER_SECOND) - frameTime);
+    }
+  }
+}
+
+void do_gameover_tick(GameState *state) {
+    SDL_Event e;
+    while(SDL_PollEvent(&e) != 0) {
+        if(e.type == SDL_KEYDOWN) {
+            if(e.key.keysym.sym == SDLK_r) {
+                restart_game(state);
+            }
+        } else if(e.type == SDL_QUIT) {
+            state->quit = true;
+        }
+    }
+}
+
+void do_play_tick(GameState *state) {
     for(int i=0; i<nenemies; i++) {
         update_enemy(state->enemies + (i*sizeof(Enemy)), state);
     }
@@ -83,20 +132,6 @@ void game_loop(GameState *state) {
 
     state->playerX += xspeed;
     state->playerY += yspeed;
-
-
-    SDL_Rect rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-    SDL_RenderFillRect(renderer, &rect);
-    render_ui(renderer, state);
-    SDL_RenderPresent(renderer);
-
-    int frameEnd = SDL_GetTicks();
-    int frameTime = frameEnd - frameStart;
-
-    if(frameTime < (1000 / FRAMES_PER_SECOND)) {
-      SDL_Delay((1000/FRAMES_PER_SECOND) - frameTime);
-    }
-  }
 }
 
 void check_button_presses(GameState *state) {
@@ -220,6 +255,13 @@ SDL_Point get_approx_vector_to_player(Enemy *enemy, GameState *state) {
 
 void update_enemy(Enemy *enemy, GameState *state) {
     float dist = distance(state->playerX, state->playerY, enemy->x, enemy->y);
+
+    if(dist <= KILL_RANGE) {
+        // YOU DIED
+        state->mode = GAME_OVER;
+        return;
+    }
+
     if(dist <= ATTRACTION_RANGE) {
         SDL_Point vector = get_approx_vector_to_player(enemy, state);
         enemy->x += vector.x;

@@ -1,5 +1,16 @@
 #include "game.h"
 
+void render_gameover_screen(SDL_Renderer *renderer, GameState *state) {
+    SDL_Color textColor = {0xFF, 0xFF, 0xFF, 0xFF};
+    SDL_Texture *text = text_to_texture("GAME OVER - press 'R' to restart", textColor);
+    int textWidth;
+    int textHeight;
+    SDL_QueryTexture(text, NULL, NULL, &textWidth, &textHeight);
+    SDL_Rect textDst = {WINDOW_WIDTH/2 - textWidth-2, WINDOW_HEIGHT/2 - textHeight/2, textWidth, textHeight};
+    SDL_Rect textSrc = {0, 0, textWidth, textHeight};
+    SDL_RenderCopy(renderer, text, &textSrc, &textDst);
+}
+
 void render_ui(SDL_Renderer *renderer, GameState *state) {
 
   //draw screen
