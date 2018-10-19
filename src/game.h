@@ -119,6 +119,18 @@
 #define UI_RETICLE_X 512
 #define UI_RETICLE_Y 0
 
+static const SDL_Rect MINE_SRC = {
+                                  UI_CIRCLE_FILL_GREEN_X,
+                                  UI_CIRCLE_FILL_GREEN_Y,
+                                  SPRITE_W, SPRITE_H
+};
+
+static const SDL_Rect MINE_SRC_EMPTY = {
+                                        UI_CIRCLE_GREEN_X,
+                                        UI_CIRCLE_GREEN_Y,
+                                        SPRITE_W, SPRITE_H
+};
+
 static const SDL_Rect ENEMY_SRC = {
   UI_CIRCLE_RED_X,
   UI_CIRCLE_RED_Y,
@@ -203,6 +215,12 @@ typedef struct {
   bool alerted;
 } Enemy;
 
+typedef struct {
+  int x;
+  int y;
+  int remaining_resource;
+} Mine;
+
 enum ComponentType {UI_RED_LED,
                     UI_GREEN_LED,
                     UI_MN_LT,
@@ -230,6 +248,8 @@ typedef struct {
   int playerY;
 
   Enemy *enemies;
+  Mine *mines;
+  
   int screen_mode; //mine=1 scan=2 none=-1
 
   GameMode mode;
@@ -238,6 +258,7 @@ typedef struct {
 //GLOBALS
 
 int nenemies;
+int nmines;
 
 int mousex;
 int mousey;
@@ -278,6 +299,7 @@ bool mouse_inside_bbox(int x, int y, int width, int height);
 void handle_key_event(SDL_Event e, bool keyDown);
 float distance(float ax, float ay, float bx, float by);
 bool enemy_in_range(Enemy *enemy, GameState *state, int range);
+bool mine_in_range(Mine *mine, GameState *state, int range);
 SDL_Point get_approx_vector_to_player(Enemy *enemy, GameState *state);
 void update_enemy(Enemy *enemy, GameState *state);
 void do_play_tick(GameState *state);

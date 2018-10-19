@@ -8,7 +8,9 @@ void game_init() {
 
   state = malloc(sizeof(GameState));
   nenemies = 10;
+  nmines = 30;
   state->enemies = malloc(nenemies * sizeof(Enemy));
+  state->mines = malloc(nmines * sizeof(Mine));
   restart_game(state);
 }
 
@@ -37,6 +39,14 @@ void restart_game(GameState *state) {
     state->enemies[i].x = x;
     state->enemies[i].y = y;
     state->enemies[i].alerted = false;
+  }
+
+  for(int i=0; i<nmines; i++) {
+    int x = (int)rand()%maxRand;
+    int y = (int)rand()%maxRand;
+    state->mines[i].x = x;
+    state->mines[i].y = y;
+    state->mines[i].remaining_resource = 50;
   }
 }
 
@@ -225,6 +235,21 @@ bool enemy_in_range(Enemy *e, GameState * state, int range) {
      && e->x < px + range
      && e->y > py - range
      && e->y < py + range) {
+
+    return true;
+  }
+
+  return false;
+}
+
+bool mine_in_range(Mine *m, GameState * state, int range) {
+  int px = state->playerX;
+  int py = state->playerY;
+
+  if(m->x > px - range
+     && m->x < px + range
+     && m->y > py - range
+     && m->y < py + range) {
 
     return true;
   }

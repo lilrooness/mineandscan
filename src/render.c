@@ -339,10 +339,10 @@ void render_enemies(GameState *state) {
       int screenPosY = (screenHeight / scanRange) * ey;
 
       SDL_Rect dstRect = (SDL_Rect){
-        x_log_to_real(DISPLAY_SCREEN_X + screenPosX - SPRITE_W_GAME/2),
-        y_log_to_real(DISPLAY_SCREEN_Y + screenPosY - SPRITE_H_GAME/2),
-        x_log_to_real(SPRITE_W_GAME),
-        y_log_to_real(SPRITE_H_GAME)
+                                    x_log_to_real(DISPLAY_SCREEN_X + screenPosX - SPRITE_W_GAME/2),
+                                    y_log_to_real(DISPLAY_SCREEN_Y + screenPosY - SPRITE_H_GAME/2),
+                                    x_log_to_real(SPRITE_W_GAME),
+                                    y_log_to_real(SPRITE_H_GAME)
       };
 
       SDL_RenderCopy(renderer,
@@ -354,6 +354,45 @@ void render_enemies(GameState *state) {
 }
 
 void render_mines(GameState *state) {
+  int i;
+  Mine *tmp;
 
+  for(i=0; i<nmines; i++) {
+    tmp = state->mines + (i*sizeof(Mine));
+
+    if(mine_in_range(tmp, state, SCAN_RANGE/2)) {
+      float ex = tmp->x - (state->playerX - SCAN_RANGE/2);
+      float ey = tmp->y - (state->playerY - SCAN_RANGE/2);
+      
+      float screenWidth =SPRITE_W_GAME * (DISPLAY_SCREEN_WIDTH);
+      float screenHeight=SPRITE_H_GAME *(DISPLAY_SCREEN_HEIGHT);
+      float scanRange = SCAN_RANGE;
+      
+      int screenPosX = (screenWidth / scanRange) * ex;
+      int screenPosY = (screenHeight / scanRange) * ey;
+      
+      SDL_Rect dstRect = (SDL_Rect){
+                                    x_log_to_real(DISPLAY_SCREEN_X + screenPosX - SPRITE_W_GAME/2),
+                                    y_log_to_real(DISPLAY_SCREEN_Y + screenPosY - SPRITE_H_GAME/2),
+                                    x_log_to_real(SPRITE_W_GAME),
+                                    y_log_to_real(SPRITE_H_GAME)
+      };
+      
+      if(tmp->remaining_resource > 0) {
+        SDL_RenderCopy(renderer,
+                       spriteSheet,
+                       &MINE_SRC,
+                       &dstRect);
+      } else {
+        SDL_RenderCopy(renderer,
+                     spriteSheet,
+                     &MINE_SRC_EMPTY,
+                     &dstRect);
+      }
+    }
+
+    //just to break the curlies }}}}}
+    return;
+  }
 }
 
