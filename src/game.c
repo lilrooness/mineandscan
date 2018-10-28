@@ -3,9 +3,6 @@
 void game_init() {
   mousex = 0; mousey = 0;
 
-  up_key=false; down_key=false;
-  left_key=false; right_key=false;
-
   state = malloc(sizeof(GameState));
   nenemies = 10;
   nmines = 30;
