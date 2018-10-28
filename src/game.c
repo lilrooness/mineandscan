@@ -13,20 +13,23 @@ void game_init() {
 
 void restart_game(GameState *state) {
 
+  up_key=false; down_key=false;
+  left_key=false; right_key=false;
+
   state->mode = PLAY;
 
   state->quit = false;
 
-  state->scanButton = (Button) {3, 8, true};
-  state->mineButton = (Button) {3, 33, false};
+  state->scanButton = (Button) {3, 8, false};
+  state->mineButton = (Button) {3, 33, true};
 
-  state->scanLight = (ScanLight) {17, 8, true};
-  state->mineLight = (MineLight) {17, 33, false};
+  state->scanLight = (ScanLight) {17, 8, false};
+  state->mineLight = (MineLight) {17, 33, true};
 
   state->playerX = 100;
   state->playerY = 0;
 
-  state->screen_mode = 2;
+  state->screen_mode = 1;
 
   int maxRand = 100;
 
@@ -181,7 +184,7 @@ void check_button_presses(GameState *state) {
     state->mineButton.down = !state->mineButton.down;
     state->mineLight.on = state->mineButton.down;
 
-    if(state->scanLight.on) {
+    if(state->mineLight.on) {
       state->screen_mode = 1;
       state->scanLight.on = false;
       state->scanButton.down = false;
