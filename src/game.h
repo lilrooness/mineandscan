@@ -9,15 +9,18 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 #elif __APPLE__
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include <SDL2_ttf/SDL_ttf.h>
+#include <SDL2_mixer/SDL_mixer.h>
 #elif __WIN32
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #endif
 
 
@@ -236,6 +239,8 @@ MENU, PLAY, GAME_OVER
 typedef enum GameMode GameMode;
 
 typedef struct {
+  
+  int frames_since_radar_ping;
   bool quit;
 
   Button scanButton;
@@ -253,6 +258,8 @@ typedef struct {
   int screen_mode; //mine=1 scan=2 none=-1
 
   GameMode mode;
+
+  char dbg_string[300];
 } GameState;
 
 //GLOBALS
@@ -277,6 +284,10 @@ SDL_Renderer *renderer;
 SDL_Texture *spriteSheet;
 
 TTF_Font *font;
+
+Mix_Chunk *radar_ping;
+Mix_Music *ambiance;
+int radar_ping_channel;
 
 //FUNCTIONS
 void render_ui(SDL_Renderer *renderer, GameState *state);
@@ -305,6 +316,7 @@ void update_enemy(Enemy *enemy, GameState *state);
 void do_play_tick(GameState *state);
 void do_gameover_tick(GameState *state);
 void restart_game(GameState *state);
+float get_closest_enemy_distance(GameState *state);
 
 #define GAME_H
 #endif

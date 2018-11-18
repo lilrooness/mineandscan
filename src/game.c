@@ -16,6 +16,8 @@ void restart_game(GameState *state) {
   up_key=false; down_key=false;
   left_key=false; right_key=false;
 
+  state->frames_since_radar_ping = 0;
+
   state->mode = PLAY;
 
   state->quit = false;
@@ -73,12 +75,21 @@ void game_loop(GameState *state) {
     int frameStart = SDL_GetTicks();
 
     if(state->mode == PLAY) {
-        do_play_tick(state);
+      do_play_tick(state);
+      state->frames_since_radar_ping ++;
+      float closest_dist = get_closest_enemy_distance(state);
+      sprintf(state->dbg_string, "closest: %f", closest_dist);
+      
+      if(state->frames_since_radar_ping > closest_dist/2) {
+        Mix_HaltChannel(3);
+        Mix_PlayChannel(3, radar_ping, 0);
+        state->frames_since_radar_ping = 0;
+      }
     } else if (state->mode == GAME_OVER) {
-        do_gameover_tick(state);
+      do_gameover_tick(state);
     }
-
-
+    
+    
     SDL_Rect rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
     SDL_RenderFillRect(renderer, &rect);
 
@@ -115,9 +126,8 @@ void do_gameover_tick(GameState *state) {
 
 void do_play_tick(GameState *state) {
     for(int i=0; i<nenemies; i++) {
-        update_enemy(state->enemies + (i*sizeof(Enemy)), state);
+      update_enemy(&state->enemies[i], state);
     }
-
     handle_input(state);
 
 
@@ -255,6 +265,24 @@ bool mine_in_range(Mine *m, GameState * state, int range) {
   }
 
   return false;
+}
+
+float get_closest_enemy_distance(GameState *state) {
+  
+  float closest_distance = -1;
+  
+  for(int i =0; i<nenemies; i++) {
+    float dist = distance(state->enemies[i].x, state->enemies[i].y, state->playerX, state->playerY);
+
+    if(closest_distance == -1) {
+      closest_distance = dist;
+    } else if(dist < closest_distance) {
+      closest_distance = dist;
+    }
+
+  }
+
+  return closest_distance;
 }
 
 SDL_Point get_approx_vector_to_player(Enemy *enemy, GameState *state) {

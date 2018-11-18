@@ -109,7 +109,7 @@ void render_ui(SDL_Renderer *renderer, GameState *state) {
                  &textSrcRect,
                  &textDstRect);
 
-  SDL_SetRenderDrawColor(renderer,
+    SDL_SetRenderDrawColor(renderer,
                          0x00,
                          0x00,
                          0x00,
@@ -239,9 +239,14 @@ SDL_Texture* load_texture(SDL_Renderer *renderer,
 }
 
 int render_init() {
-  if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-    printf("SDL could not initialise video %s",
+  if(SDL_Init(SDL_INIT_VIDEO || SDL_INIT_AUDIO) < 0) {
+    printf("SDL could not initialise either video or audio %s",
            SDL_GetError());
+    return 1;
+  }
+
+  if(Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0) {
+    printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
     return 1;
   }
 
@@ -325,7 +330,7 @@ void render_enemies(GameState *state) {
   Enemy *tmp;
 
   for(i=0; i<nenemies; i++) {
-    tmp = state->enemies + (i*sizeof(Enemy));
+    tmp = &(state->enemies[i]);
 
     if(enemy_in_range(tmp, state, SCAN_RANGE/2)) {
       float ex = tmp->x - (state->playerX - SCAN_RANGE/2);
@@ -358,7 +363,7 @@ void render_mines(GameState *state) {
   Mine *tmp;
 
   for(i=0; i<nmines; i++) {
-    tmp = state->mines + (i*sizeof(Mine));
+    tmp = &(state->mines[i]);
 
     if(mine_in_range(tmp, state, SCAN_RANGE/2)) {
       float ex = tmp->x - (state->playerX - SCAN_RANGE/2);
